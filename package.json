@@ -1,11 +1,11 @@
 {
   "name": "urbanoe-media-gallery",
   "version": "1.0.0",
-  "description": "Contains interfaces and Redux constructs to query the media_gallery engine.",
+    "description": "Defines interfaces and Redux constructs to query the media_gallery engine.",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mbeauv/urbanoe-communications.git"
+    "url": "https://github.com/mbeauv/media-gallery-redux"
   },
   "scripts": {
     "prebuild": "rimraf dist && mkdir dist",
@@ -23,7 +23,7 @@
     "redux"
   ],
   "author": "mbeauv@gmail.com",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "axios-mock-adapter": "^1.12.0",
     "babel-cli": "^6.26.0",
