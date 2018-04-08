@@ -1,5 +1,5 @@
 {
-  "name": "urbanoe-media-gallery",
+  "name": "media-gallery-redux",
   "version": "1.0.0",
     "description": "Defines interfaces and Redux constructs to query the media_gallery engine.",
   "main": "dist/index.js",
