@@ -12,6 +12,7 @@ import {
   deleteImageGallery,
 } from '../image_galleries_actions';
 
+
 const AUTH_TOKEN = 'atoken';
 const GALLERY1_ID = 5;
 const GALLERY1_NAME = 'jdoe_gallery';
@@ -35,9 +36,29 @@ const mockStore = configureMockStore(middlewares);
 describe('image_galleries_actions', () => {
   beforeEach(() => setMediaGalleryCommunicatorInstance(mock.axiosInstance));
 
+  let store;
+
+  beforeEach(() => {
+    store = mockStore();
+  });
+
   afterEach(() => mock.reset());
 
   describe('deleteImageGallery', () => {
+    it('handles failed deletion', () => {
+      mock.onDelete(`/media_gallery/galleries/${GALLERY1_ID}.json?auth_token=${AUTH_TOKEN}`).reply(500);
+
+      const expectedActions = [
+        { type: 'IMAGE_GALLERY_DELETE_REQUEST', galleryId: GALLERY1_ID },
+        { type: 'IMAGE_GALLERY_DELETE_RESPONSE_ERROR', galleryId: GALLERY1_ID, error: expect.anything() },
+      ];
+
+      return store.dispatch(deleteImageGallery(AUTH_TOKEN, GALLERY1_ID)).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+
     it('handles successful deletion', () => {
       mock.onDelete(`/media_gallery/galleries/${GALLERY1_ID}.json?auth_token=${AUTH_TOKEN}`).reply(200);
 
@@ -46,8 +67,6 @@ describe('image_galleries_actions', () => {
         { type: 'IMAGE_GALLERY_DELETE_RESPONSE_OK', galleryId: GALLERY1_ID },
       ];
 
-      const store = mockStore({ todos: [] });
-
       return store.dispatch(deleteImageGallery(AUTH_TOKEN, GALLERY1_ID)).then(() => {
         expect(store.getActions()).toEqual(expectedActions);
       });
@@ -55,6 +74,28 @@ describe('image_galleries_actions', () => {
   });
 
   describe('updateImageGallery', () => {
+    it('handles failed update', () => {
+      mock.onPut(`/media_gallery/galleries/${GALLERY1_ID}.json?auth_token=${AUTH_TOKEN}`, {
+        name: GALLERY1_NAME,
+        description: GALLERY1_DESCRIPTION,
+      }).reply(500);
+
+
+      const expectedActions = [
+        { type: 'IMAGE_GALLERY_UPDATE_REQUEST', galleryId: GALLERY1_ID },
+        { type: 'IMAGE_GALLERY_UPDATE_RESPONSE_ERROR', galleryId: GALLERY1_ID, error: expect.anything() },
+      ];
+
+      return store.dispatch(updateImageGallery(
+        AUTH_TOKEN,
+        GALLERY1_ID,
+        GALLERY1_NAME,
+        GALLERY1_DESCRIPTION,
+      )).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
     it('handles successful update', () => {
       mock.onPut(`/media_gallery/galleries/${GALLERY1_ID}.json?auth_token=${AUTH_TOKEN}`, {
         name: GALLERY1_NAME,
@@ -63,17 +104,9 @@ describe('image_galleries_actions', () => {
 
 
       const expectedActions = [
-        {
-          type: 'IMAGE_GALLERY_UPDATE_REQUEST',
-          galleryId: GALLERY1_ID,
-        },
-        {
-          type: 'IMAGE_GALLERY_UPDATE_RESPONSE_OK',
-          gallery: GALLERY1,
-        },
+        { type: 'IMAGE_GALLERY_UPDATE_REQUEST', galleryId: GALLERY1_ID },
+        { type: 'IMAGE_GALLERY_UPDATE_RESPONSE_OK', gallery: GALLERY1 },
       ];
-
-      const store = mockStore({ todos: [] });
 
       return store.dispatch(updateImageGallery(
         AUTH_TOKEN,
@@ -87,6 +120,26 @@ describe('image_galleries_actions', () => {
   });
 
   describe('createImageGallery', () => {
+    it('handles failed creation', () => {
+      mock.onPost(`/media_gallery/galleries.json?auth_token=${AUTH_TOKEN}`, {
+        name: GALLERY1_NAME,
+        description: GALLERY1_DESCRIPTION,
+      }).reply(500);
+
+      const expectedActions = [
+        { type: 'IMAGE_GALLERY_CREATE_REQUEST', galleryName: GALLERY1_NAME, galleryDescription: GALLERY1_DESCRIPTION },
+        { type: 'IMAGE_GALLERY_CREATE_RESPONSE_ERROR', error: expect.anything() },
+      ];
+
+      return store.dispatch(createImageGallery(
+        AUTH_TOKEN,
+        GALLERY1_NAME,
+        GALLERY1_DESCRIPTION,
+      )).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
     it('handles successful creation', () => {
       mock.onPost(`/media_gallery/galleries.json?auth_token=${AUTH_TOKEN}`, {
         name: GALLERY1_NAME,
@@ -95,18 +148,9 @@ describe('image_galleries_actions', () => {
 
 
       const expectedActions = [
-        {
-          type: 'IMAGE_GALLERY_CREATE_REQUEST',
-          galleryName: GALLERY1_NAME,
-          galleryDescription: GALLERY1_DESCRIPTION,
-        },
-        {
-          type: 'IMAGE_GALLERY_CREATE_RESPONSE_OK',
-          gallery: GALLERY1,
-        },
+        { type: 'IMAGE_GALLERY_CREATE_REQUEST', galleryName: GALLERY1_NAME, galleryDescription: GALLERY1_DESCRIPTION },
+        { type: 'IMAGE_GALLERY_CREATE_RESPONSE_OK', gallery: GALLERY1 },
       ];
-
-      const store = mockStore({ todos: [] });
 
       return store.dispatch(createImageGallery(
         AUTH_TOKEN,
@@ -126,8 +170,6 @@ describe('image_galleries_actions', () => {
         { type: 'IMAGE_GALLERY_LIST_REQUEST' },
         { type: 'IMAGE_GALLERY_LIST_RESPONSE_OK', galleries: GALLERIES },
       ];
-
-      const store = mockStore({ todos: [] });
 
       return store.dispatch(getImageGalleries(AUTH_TOKEN)).then(() => {
         expect(store.getActions()).toEqual(expectedActions);
