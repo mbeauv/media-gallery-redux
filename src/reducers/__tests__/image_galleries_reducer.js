@@ -6,10 +6,18 @@ import {
   imageGalleriesReducer,
   selectGalleries,
   selectGallery,
-  selectLoadingIndicator,
+  selectGalleryProcessingType,
+} from '../image_galleries_reducer';
+import type {
+  ImageGalleryListState,
 } from '../image_galleries_reducer';
 
-const EMPTY_STATE = { loading: false, galleries: new Map(), error: null };
+const EMPTY_STATE = {
+  processing: null,
+  galleries: new Map(),
+  error: null,
+};
+
 const ERROR = { message: 'error message' };
 
 const GALLERY_INFO_1 : ImageGallery = {
@@ -36,16 +44,16 @@ describe('image_galleries_reducer', () => {
 
     beforeEach(() => {
       state = {
-        loading: false,
+        processing: null,
         error: null,
         galleries: Map({
           gallery_6: {
-            loading: true,
+            processing: null,
             error: null,
             gallery: GALLERY_INFO_1,
           },
           gallery_5: {
-            loading: false,
+            processing: null,
             error: null,
             gallery: GALLERY_INFO_2,
           },
@@ -71,15 +79,15 @@ describe('image_galleries_reducer', () => {
 
     describe('selectLoadingIndicator', () => {
       it('returns true when gallery is loading', () => {
-        expect(selectLoadingIndicator(state, 6)).toEqual(true);
+        expect(selectGalleryProcessingType(state, 6)).toEqual(null);
       });
 
       it('returns false when gallery is not loading', () => {
-        expect(selectLoadingIndicator(state, 5)).toEqual(false);
+        expect(selectGalleryProcessingType(state, 5)).toEqual(null);
       });
 
       it('returns false when gallery does not exist', () => {
-        expect(selectLoadingIndicator(state, 25)).toEqual(false);
+        expect(selectGalleryProcessingType(state, 25)).toEqual(null);
       });
     });
   });
@@ -97,15 +105,15 @@ describe('image_galleries_reducer', () => {
 
       it('processes IMAGE_GALLERY_LIST_REQUEST correctly', () => {
         expect(imageGalleriesReducer(EMPTY_STATE, { type: 'IMAGE_GALLERY_LIST_REQUEST' })).toEqual({
-          loading: true,
+          processing: 'fetch',
           error: null,
           galleries: Map(),
         });
       });
 
       it('processes IMAGE_GALLERY_LIST_RESPONSE_ERROR correctly', () => {
-        const startState = { loading: true, error: null, galleries: Map() };
-        const expectedState = { loading: false, error: ERROR, galleries: Map() };
+        const startState = { processing: 'fetch', error: null, galleries: Map() };
+        const expectedState = { processing: null, error: ERROR, galleries: Map() };
 
         expect(imageGalleriesReducer(
           startState,
@@ -115,18 +123,18 @@ describe('image_galleries_reducer', () => {
 
       it('processes IMAGE_GALLERY_LIST_RESPONSE_OK correctly', () => {
         const galleries = [GALLERY_INFO_1, GALLERY_INFO_2];
-        const startState = { loading: true, error: null, galleries: Map() };
+        const startState = { processing: 'fetch', error: null, galleries: Map() };
         const expectedState = {
-          loading: false,
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: null,
               gallery: GALLERY_INFO_1,
             },
             gallery_6: {
-              loading: false,
+              processing: null,
               error: null,
               gallery: GALLERY_INFO_2,
             },
@@ -139,9 +147,9 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_CREATE_REQUEST', () => {
-        const startState = { loading: false, error: null, galleries: Map() };
+        const startState = { processing: null, error: null, galleries: Map() };
         const expectedState = {
-          loading: true,
+          processing: 'add',
           error: null,
           galleries: Map(),
         };
@@ -152,13 +160,17 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_CREATE_RESPONSE_OK', () => {
-        const startState = { loading: true, error: null, galleries: Map() };
-        const expectedState = {
-          loading: false,
+        const startState : ImageGalleryListState = {
+          processing: 'add',
+          error: null,
+          galleries: Map(),
+        };
+        const expectedState : ImageGalleryListState = {
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: null,
               gallery: GALLERY_INFO_1,
             },
@@ -172,8 +184,8 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_CREATE_RESPONSE_ERROR', () => {
-        const startState = { loading: true, error: null, galleries: Map() };
-        const expectedState = { loading: false, error: ERROR, galleries: Map() };
+        const startState = { processing: 'add', error: null, galleries: Map() };
+        const expectedState = { processing: null, error: ERROR, galleries: Map() };
 
         expect(imageGalleriesReducer(startState, {
           type: 'IMAGE_GALLERY_CREATE_RESPONSE_ERROR',
@@ -187,11 +199,11 @@ describe('image_galleries_reducer', () => {
 
       beforeAll(() => {
         startState = {
-          loading: false,
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: null,
               gallery: GALLERY_INFO_1,
             },
@@ -200,12 +212,12 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_LIST_DELETE_REQUEST', () => {
-        const expectedState = {
-          loading: false,
+        const expectedState : ImageGalleryListState = {
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: true,
+              processing: 'delete',
               error: null,
               gallery: GALLERY_INFO_1,
             },
@@ -219,12 +231,12 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_LIST_DELETE_RESPONSE_ERROR', () => {
-        const expectedState = {
-          loading: false,
+        const expectedState : ImageGalleryListState = {
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: ERROR,
               gallery: GALLERY_INFO_1,
             },
@@ -238,8 +250,8 @@ describe('image_galleries_reducer', () => {
       });
 
       it('processes IMAGE_GALLERY_LIST_DELETE_RESPONSE_OK', () => {
-        const expectedState = {
-          loading: false,
+        const expectedState : ImageGalleryListState = {
+          processing: null,
           error: null,
           galleries: Map(),
         };
@@ -252,11 +264,11 @@ describe('image_galleries_reducer', () => {
 
       it('processes IMAGE_GALLERY_UPDATE_REQUEST', () => {
         const expectedState = {
-          loading: false,
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: true,
+              processing: 'update',
               error: null,
               gallery: GALLERY_INFO_1,
             },
@@ -271,11 +283,11 @@ describe('image_galleries_reducer', () => {
 
       it('processes IMAGE_GALLERY_UPDATE_RESPONSE_ERROR', () => {
         const expectedState = {
-          loading: false,
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: ERROR,
               gallery: GALLERY_INFO_1,
             },
@@ -293,11 +305,11 @@ describe('image_galleries_reducer', () => {
         const newGallery = { ...GALLERY_INFO_1, description: 'a new description' };
 
         const expectedState = {
-          loading: false,
+          processing: null,
           error: null,
           galleries: Map({
             gallery_5: {
-              loading: false,
+              processing: null,
               error: null,
               gallery: newGallery,
             },
