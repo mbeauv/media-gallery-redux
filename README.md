@@ -1,5 +1,7 @@
 # media-gallery-redux
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/9f71098f4b2384686bdc/maintainability)](https://codeclimate.com/github/mbeauv/media-gallery-redux/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/9f71098f4b2384686bdc/test_coverage)](https://codeclimate.com/github/mbeauv/media-gallery-redux/test_coverage)
+
 Module defining Redux actions and reducers to interact with the media_gallery engine.  This module is usable both in React and React Native.
 
 
