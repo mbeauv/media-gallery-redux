@@ -7,6 +7,7 @@ import {
   selectGalleries,
   selectGallery,
   selectGalleryProcessingType,
+  selectGalleriesProcessingType,
 } from '../image_galleries_reducer';
 import type {
   ImageGalleryListState,
@@ -77,7 +78,7 @@ describe('image_galleries_reducer', () => {
       });
     });
 
-    describe('selectLoadingIndicator', () => {
+    describe('selectGalleryProcessingType', () => {
       it('returns true when gallery is loading', () => {
         expect(selectGalleryProcessingType(state, 6)).toEqual(null);
       });
@@ -88,6 +89,17 @@ describe('image_galleries_reducer', () => {
 
       it('returns false when gallery does not exist', () => {
         expect(selectGalleryProcessingType(state, 25)).toEqual(null);
+      });
+    });
+
+    describe('selectGalleriesProcessingType', () => {
+      it('returns true when gallery is loading', () => {
+        expect(selectGalleriesProcessingType(state)).toEqual(null);
+      });
+
+      it('returns false when gallery is not loading', () => {
+        const testState = { ...state, processing: 'add' };
+        expect(selectGalleriesProcessingType(testState)).toEqual('add');
       });
     });
   });

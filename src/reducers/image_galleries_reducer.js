@@ -125,11 +125,20 @@ export function selectGallery(state: ImageGalleryListState, galleryId: number)
 }
 
 /**
-* Selector returning the operation presently being processed on the gallery.
-* If the state is stable, this value is null.
-*/
+ * Selector returning the operation presently being processed on the gallery.
+ * If the state is stable, this value is null.
+ */
 export function selectGalleryProcessingType(state: ImageGalleryListState, galleryId: number)
   : ?ImageGalleryOperation {
   const gallery = state.galleries.get(galleryIndex(galleryId));
   return gallery ? gallery.processing : null;
+}
+
+/**
+ * Selector returning the operation being processed on the list of galleries.
+ * Here to, if the state is stable (i.e. no operation being performed), null
+ * will be returned.
+ */
+export function selectGalleriesProcessingType(state: ImageGalleryListState) {
+  return state.processing;
 }
