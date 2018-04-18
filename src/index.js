@@ -9,6 +9,7 @@ export {
   selectGalleries,
   selectGallery,
   selectGalleryProcessingType,
+  selectGalleryListProcessingType,
 } from './reducers/image_galleries_reducer';
 export type {
   ImageGalleryOperation,

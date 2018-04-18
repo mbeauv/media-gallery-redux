@@ -139,6 +139,6 @@ export function selectGalleryProcessingType(state: ImageGalleryListState, galler
  * Here to, if the state is stable (i.e. no operation being performed), null
  * will be returned.
  */
-export function selectGalleriesProcessingType(state: ImageGalleryListState) {
+export function selectGalleryListProcessingType(state: ImageGalleryListState) {
   return state.processing;
 }
