@@ -118,9 +118,16 @@ export const selectGalleries = (state: ImageGalleryListState) : Array<ImageGalle
 );
 
 /** Selector returning gallery with given id */
-export function selectGallery(state: ImageGalleryListState, galleryId: number)
+export function selectGalleryWithId(state: ImageGalleryListState, galleryId: number)
   : ?ImageGallery {
   const gallery = state.galleries.get(galleryIndex(galleryId));
+  return gallery ? gallery.gallery : null;
+}
+
+export function selectGalleryWithName(state: ImageGalleryListState, galleryName: ?string)
+  : ?ImageGallery {
+  if (!galleryName) return null;
+  const gallery = state.galleries.find(g => g.gallery.name === galleryName);
   return gallery ? gallery.gallery : null;
 }
 

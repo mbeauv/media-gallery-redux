@@ -5,7 +5,8 @@ import type { ImageGallery } from '../../models/ImageGallery';
 import {
   imageGalleriesReducer,
   selectGalleries,
-  selectGallery,
+  selectGalleryWithId,
+  selectGalleryWithName,
   selectGalleryProcessingType,
   selectGalleryListProcessingType,
 } from '../image_galleries_reducer';
@@ -68,13 +69,27 @@ describe('image_galleries_reducer', () => {
       });
     });
 
-    describe('selectGallery', () => {
+    describe('selectGalleryWithId', () => {
       it('returns gallery if it exists', () => {
-        expect(selectGallery(state, 5)).toEqual(GALLERY_INFO_2);
+        expect(selectGalleryWithId(state, 5)).toEqual(GALLERY_INFO_2);
       });
 
       it('returns null if it does not exist', () => {
-        expect(selectGallery(state, 52)).toEqual(null);
+        expect(selectGalleryWithId(state, 52)).toEqual(null);
+      });
+    });
+
+    describe('selectGalleryWithName', () => {
+      it('returns gallery if it exists', () => {
+        expect(selectGalleryWithName(state, GALLERY_INFO_2.name)).toEqual(GALLERY_INFO_2);
+      });
+
+      it('returns null if it does not exist', () => {
+        expect(selectGalleryWithName(state, 'blblala')).toEqual(null);
+      });
+
+      it('returns null if name is null', () => {
+        expect(selectGalleryWithName(state, null)).toEqual(null);
       });
     });
 
