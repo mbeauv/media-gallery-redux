@@ -27,7 +27,7 @@ describe('image_scratch_reducer', () => {
     });
 
     it('returns current state if unsupported action', () => {
-      expect(imageScratchReducer(INITIAL_STATE, { type: 'IMAGE_GALLERY_SCRATCH_REINIT_LOCAL' })).toEqual(INITIAL_STATE);
+      expect(imageScratchReducer(INITIAL_STATE, { type: 'IMAGE_GALLERY_IMAGE_INFO_SELECTION_REQUEST' })).toEqual(INITIAL_STATE);
     });
 
     it('processes IMAGE_GALLERY_SCRATCH_REINIT_LOCAL', () => {
@@ -41,6 +41,18 @@ describe('image_scratch_reducer', () => {
       expect(imageScratchReducer(INITIAL_STATE, CREATE_REQUEST)).toEqual({
         loading: true,
         error: null,
+        imageScratch: null,
+      });
+    });
+
+    it('processes IMAGE_GALLERY_SCRATCH_CREATE_RESPONSE_ERROR', () => {
+      const error = { message: 'an error' };
+      expect(imageScratchReducer(INITIAL_STATE, {
+        type: 'IMAGE_GALLERY_SCRATCH_CREATE_RESPONSE_ERROR',
+        error,
+      })).toEqual({
+        loading: false,
+        error,
         imageScratch: null,
       });
     });

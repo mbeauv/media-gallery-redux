@@ -90,7 +90,7 @@ export function imageGalleriesReducer(
         error: null,
         gallery: action.gallery });
     case 'IMAGE_GALLERY_CREATE_REQUEST':
-      return { ...state, processing: 'add', error: null, galleries: Map() };
+      return { ...state, processing: 'add', error: null };
     case 'IMAGE_GALLERY_CREATE_RESPONSE_ERROR':
       return { ...state, processing: null, error: action.error, galleries: Map() };
     case 'IMAGE_GALLERY_CREATE_RESPONSE_OK':
@@ -112,22 +112,35 @@ export function imageGalleriesReducer(
   }
 }
 
-/** Selector returning all galleries in reducer */
+/**
+ * Selector returning an array of all galleries in the reducer.
+ */
 export const selectGalleries = (state: ImageGalleryListState) : Array<ImageGallery> => (
   state.galleries.map(g => g.gallery).toIndexedSeq().toArray()
 );
+
+/**
+ * Selector returning a map of all galleries by names.
+ */
+export const selectGalleriesByName = (state: ImageGalleryListState) : Map<string, ImageGallery> => {
+  const values = [];
+  state.galleries.forEach(g => values.push([g.gallery.name, g.gallery]));
+  return Map(values);
+};
+
+/**
+ * Selector returning a map of all galleries by their ids.
+ */
+export const selectGalleriesById = (state: ImageGalleryListState) : Map<number, ImageGallery> => {
+  const values = [];
+  state.galleries.forEach(g => values.push([g.gallery.id, g.gallery]));
+  return Map(values);
+};
 
 /** Selector returning gallery with given id */
 export function selectGalleryWithId(state: ImageGalleryListState, galleryId: number)
   : ?ImageGallery {
   const gallery = state.galleries.get(galleryIndex(galleryId));
-  return gallery ? gallery.gallery : null;
-}
-
-export function selectGalleryWithName(state: ImageGalleryListState, galleryName: ?string)
-  : ?ImageGallery {
-  if (!galleryName) return null;
-  const gallery = state.galleries.find(g => g.gallery.name === galleryName);
   return gallery ? gallery.gallery : null;
 }
 

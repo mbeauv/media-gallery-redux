@@ -7,8 +7,9 @@ export * from './actions/communicator';
 export {
   imageGalleriesReducer,
   selectGalleries,
+  selectGalleriesById,
+  selectGalleriesByName,
   selectGalleryWithId,
-  selectGalleryWithName,
   selectGalleryProcessingType,
   selectGalleryListProcessingType,
 } from './reducers/image_galleries_reducer';

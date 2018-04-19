@@ -5,8 +5,9 @@ import type { ImageGallery } from '../../models/ImageGallery';
 import {
   imageGalleriesReducer,
   selectGalleries,
+  selectGalleriesByName,
+  selectGalleriesById,
   selectGalleryWithId,
-  selectGalleryWithName,
   selectGalleryProcessingType,
   selectGalleryListProcessingType,
 } from '../image_galleries_reducer';
@@ -63,6 +64,26 @@ describe('image_galleries_reducer', () => {
       };
     });
 
+    describe('selectGalleriesByName', () => {
+      it('returns content of state', () => {
+        const expectedContent = [
+          [GALLERY_INFO_1.name, GALLERY_INFO_1],
+          [GALLERY_INFO_2.name, GALLERY_INFO_2],
+        ];
+        expect(selectGalleriesByName(state)).toEqual(Map(expectedContent));
+      });
+    });
+
+    describe('selectGalleriesById', () => {
+      it('returns content of state', () => {
+        const expectedContent = [
+          [GALLERY_INFO_1.id, GALLERY_INFO_1],
+          [GALLERY_INFO_2.id, GALLERY_INFO_2],
+        ];
+        expect(selectGalleriesById(state)).toEqual(Map(expectedContent));
+      });
+    });
+
     describe('selectGalleries', () => {
       it('returns content of state', () => {
         expect(selectGalleries(state)).toEqual([GALLERY_INFO_1, GALLERY_INFO_2]);
@@ -76,20 +97,6 @@ describe('image_galleries_reducer', () => {
 
       it('returns null if it does not exist', () => {
         expect(selectGalleryWithId(state, 52)).toEqual(null);
-      });
-    });
-
-    describe('selectGalleryWithName', () => {
-      it('returns gallery if it exists', () => {
-        expect(selectGalleryWithName(state, GALLERY_INFO_2.name)).toEqual(GALLERY_INFO_2);
-      });
-
-      it('returns null if it does not exist', () => {
-        expect(selectGalleryWithName(state, 'blblala')).toEqual(null);
-      });
-
-      it('returns null if name is null', () => {
-        expect(selectGalleryWithName(state, null)).toEqual(null);
       });
     });
 
@@ -236,6 +243,25 @@ describe('image_galleries_reducer', () => {
             },
           }),
         };
+      });
+
+      it('processes IMAGE_GALLERY_CREATE_REQUEST', () => {
+        const expectedState : ImageGalleryListState = {
+          processing: 'add',
+          error: null,
+          galleries: Map({
+            gallery_5: {
+              processing: null,
+              error: null,
+              gallery: GALLERY_INFO_1,
+            },
+          }),
+        };
+
+        expect(imageGalleriesReducer(
+          startState,
+          { type: 'IMAGE_GALLERY_CREATE_REQUEST', name: 'blah', description: 'blahblah' },
+        )).toEqual(expectedState);
       });
 
       it('processes IMAGE_GALLERY_LIST_DELETE_REQUEST', () => {
