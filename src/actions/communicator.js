@@ -4,10 +4,6 @@ import axios from 'axios';
 
 let axiosInstance : axios = null;
 
-export function setMediaGalleryCommunicatorInstance(instance : axios) {
-  axiosInstance = instance;
-}
+export const setMediaGalleryCommunicator = (inst : axios) : void => { axiosInstance = inst; };
 
-export function mediaGalleryCommunicator() : axios {
-  return axiosInstance;
-}
+export const mediaGalleryCommunicator = () : axios => axiosInstance;

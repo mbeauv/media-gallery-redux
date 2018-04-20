@@ -51,7 +51,7 @@ const createGalleries = (galleries : Array<ImageGallery>) : Map<string, ImageGal
 const INITIAL_STATE : ImageGalleryListState = {
   processing: null,
   error: null,
-  galleries: (new Map(): Map<string, ImageGalleryState>),
+  galleries: new Map(),
 };
 
 function mergeGallery(

@@ -4,7 +4,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { setMediaGalleryCommunicatorInstance } from '../communicator';
+import { setMediaGalleryCommunicator } from '../communicator';
 import { createImageScratch, deleteImageScratch } from '../image_scratches_actions';
 
 const AUTH_TOKEN = 'blbla';
@@ -15,7 +15,7 @@ const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
 describe('image_scratches_actions', () => {
-  beforeEach(() => setMediaGalleryCommunicatorInstance(mock.axiosInstance));
+  beforeEach(() => setMediaGalleryCommunicator(mock.axiosInstance));
 
   afterEach(() => mock.reset());
 
