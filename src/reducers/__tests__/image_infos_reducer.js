@@ -52,7 +52,7 @@ describe('image_infos_reducer', () => {
                 imageInfo: IMAGE_INFO_1,
               },
               image_18: {
-                processing: 'add',
+                processing: 'update',
                 error: null,
                 imageInfo: IMAGE_INFO_2,
               },
@@ -64,7 +64,7 @@ describe('image_infos_reducer', () => {
 
     describe('selectImageInfoProcessingType', () => {
       it('returns operational value when processing is done', () => {
-        expect(selectImageInfoProcessingType(startState, 23, 18)).toEqual('add');
+        expect(selectImageInfoProcessingType(startState, 23, 18)).toEqual('update');
       });
 
       it('returns null if not processing', () => {
