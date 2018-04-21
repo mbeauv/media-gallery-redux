@@ -15,5 +15,5 @@ export {
 } from './reducers/image_galleries_reducer';
 export type {
   ImageGalleryOperation,
-  ImageGalleryListOperation,
+  ImageGalleriesOperation,
 } from './reducers/image_galleries_reducer';

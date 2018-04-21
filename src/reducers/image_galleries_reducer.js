@@ -4,21 +4,11 @@ import { Map } from 'immutable';
 import type { ImageGallery } from '../models/ImageGallery';
 import type { MediaGalleryAction } from '../actions/types';
 
-/**
- * These are the possible operations that can be made on a gallery.  Note
- * that there is no 'add' operation.  The 'add' operation is done prior
- * to adding the gallery to the reducer, we therefore model it as a gallery
- * list operation.
- */
+/**  Possible operations possible on an image galleries collection. */
 export type ImageGalleryOperation = 'delete' | 'update' | 'fetch';
 
-/**
- * These are the possible operations that can be made on the overall set of
- * galleries managed by the reducer.  Galleries can be added or deleted or
- * fetched.  There is no update because an update is always made to a gallery
- * specifically.
- */
-export type ImageGalleryListOperation = 'add' | 'delete' | 'fetch';
+/**  Possible operations possible on an image galleries collection. */
+export type ImageGalleriesOperation = 'add' | 'delete' | 'fetch';
 
 /** State of one particular image gallery. */
 export type ImageGalleryState = {
@@ -29,7 +19,7 @@ export type ImageGalleryState = {
 
 /** State of all of the galleries associated to user. */
 export type ImageGalleryListState = {
-  +processing: ?ImageGalleryListOperation,
+  +processing: ?ImageGalleriesOperation,
   +error: ?Object,
   +galleries: Map<string, ImageGalleryState>,
 }
@@ -128,37 +118,28 @@ export const selectGalleriesByName = (state: ImageGalleryListState) : Map<string
   return Map(values);
 };
 
-/**
- * Selector returning a map of all galleries by their ids.
- */
+/**  Returns map of galleries organized by their id.  */
 export const selectGalleriesById = (state: ImageGalleryListState) : Map<number, ImageGallery> => {
   const values = [];
   state.galleries.forEach(g => values.push([g.gallery.id, g.gallery]));
   return Map(values);
 };
 
-/** Selector returning gallery with given id */
+/** Returns the gallery with the given id, null returned if not found. */
 export function selectGalleryWithId(state: ImageGalleryListState, galleryId: number)
   : ?ImageGallery {
   const gallery = state.galleries.get(galleryIndex(galleryId));
   return gallery ? gallery.gallery : null;
 }
 
-/**
- * Selector returning the operation presently being processed on the gallery.
- * If the state is stable, this value is null.
- */
+/** Returns current operation being processed on gallery.  Null if no operation. */
 export function selectGalleryProcessingType(state: ImageGalleryListState, galleryId: number)
   : ?ImageGalleryOperation {
   const gallery = state.galleries.get(galleryIndex(galleryId));
   return gallery ? gallery.processing : null;
 }
 
-/**
- * Selector returning the operation being processed on the list of galleries.
- * Here to, if the state is stable (i.e. no operation being performed), null
- * will be returned.
- */
+/** Returns current operation being processed on a gallery collrection.  Null if no operation. */
 export function selectGalleryListProcessingType(state: ImageGalleryListState) {
   return state.processing;
 }
