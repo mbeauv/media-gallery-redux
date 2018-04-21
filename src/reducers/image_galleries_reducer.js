@@ -4,10 +4,10 @@ import { Map } from 'immutable';
 import type { ImageGallery } from '../models/ImageGallery';
 import type { MediaGalleryAction } from '../actions/types';
 
-/**  Possible operations possible on an image galleries collection. */
+/**  Operations allowed on an image galleries collection. */
 export type ImageGalleryOperation = 'delete' | 'update' | 'fetch';
 
-/**  Possible operations possible on an image galleries collection. */
+/**  Operations allowed on an image gallery collection. */
 export type ImageGalleriesOperation = 'add' | 'delete' | 'fetch';
 
 /** State of one particular image gallery. */

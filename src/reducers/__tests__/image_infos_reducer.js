@@ -6,7 +6,10 @@ import {
   imageInfosReducer,
   selectImageInfos,
   selectImageInfo,
-  selectImageInfoLoading,
+  selectImageInfoProcessingType,
+} from '../image_infos_reducer';
+import type {
+  ImageInfoOperation,
 } from '../image_infos_reducer';
 
 const EMPTY_STATE = { galleryImages: new Map() };
@@ -44,12 +47,12 @@ describe('image_infos_reducer', () => {
             error: null,
             imageInfos: Map({
               image_22: {
-                loading: false,
+                processing: null,
                 error: null,
                 imageInfo: IMAGE_INFO_1,
               },
               image_18: {
-                loading: true,
+                processing: 'add',
                 error: null,
                 imageInfo: IMAGE_INFO_2,
               },
@@ -59,21 +62,21 @@ describe('image_infos_reducer', () => {
       };
     });
 
-    describe('selectImageInfoLoading', () => {
-      it('returns true when loading is true', () => {
-        expect(selectImageInfoLoading(startState, 23, 18)).toEqual(true);
+    describe('selectImageInfoProcessingType', () => {
+      it('returns operational value when processing is done', () => {
+        expect(selectImageInfoProcessingType(startState, 23, 18)).toEqual('add');
       });
 
-      it('returns false if loading is false', () => {
-        expect(selectImageInfoLoading(startState, 23, 22)).toEqual(false);
+      it('returns null if not processing', () => {
+        expect(selectImageInfoProcessingType(startState, 23, 22)).toEqual(null);
       });
 
-      it('returns false if image not found', () => {
-        expect(selectImageInfoLoading(startState, 23, 25)).toEqual(false);
+      it('returns null if image not found', () => {
+        expect(selectImageInfoProcessingType(startState, 23, 25)).toEqual(null);
       });
 
-      it('returns false if gallery not found', () => {
-        expect(selectImageInfoLoading(startState, 23, 12)).toEqual(false);
+      it('returns null if gallery not found', () => {
+        expect(selectImageInfoProcessingType(startState, 23, 12)).toEqual(null);
       });
     });
 
@@ -130,7 +133,7 @@ describe('image_infos_reducer', () => {
     });
 
     describe('when state has one image', () => {
-      const startState = (loading : boolean = false) => (
+      const startState = (processing : ?ImageInfoOperation = null) => (
         {
           galleryImages: Map({
             gallery_23: {
@@ -138,7 +141,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading,
+                  processing,
                   error: null,
                   imageInfo: IMAGE_INFO_1,
                 },
@@ -148,7 +151,7 @@ describe('image_infos_reducer', () => {
         }
       );
 
-      it('processes IMAGE_GALLERY_DELETE_REQUEST', () => {
+      it('processes IMAGE_GALLERY_IMAGE_INFO_DELETE_REQUEST', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
@@ -156,7 +159,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading: true,
+                  processing: 'delete',
                   error: null,
                   imageInfo: IMAGE_INFO_1,
                 },
@@ -172,7 +175,7 @@ describe('image_infos_reducer', () => {
         })).toEqual(expectedState);
       });
 
-      it('processes IMAGE_GALLERY_DELETE_RESPONSE_ERROR', () => {
+      it('processes IMAGE_GALLERY_IMAGE_INFO_DELETE_RESPONSE_ERROR', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
@@ -180,7 +183,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading: false,
+                  processing: null,
                   error: ERROR,
                   imageInfo: IMAGE_INFO_1,
                 },
@@ -223,7 +226,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading: true,
+                  processing: 'update',
                   error: null,
                   imageInfo: IMAGE_INFO_1,
                 },
@@ -247,7 +250,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading: false,
+                  processing: null,
                   error: ERROR,
                   imageInfo: IMAGE_INFO_1,
                 },
@@ -256,7 +259,7 @@ describe('image_infos_reducer', () => {
           }),
         };
 
-        expect(imageInfosReducer(startState(true), {
+        expect(imageInfosReducer(startState('update'), {
           type: 'IMAGE_GALLERY_IMAGE_INFO_UPDATE_RESPONSE_ERROR',
           galleryId: 23,
           imageInfoId: 22,
@@ -274,7 +277,7 @@ describe('image_infos_reducer', () => {
               error: null,
               imageInfos: Map({
                 image_22: {
-                  loading: false,
+                  processing: null,
                   error: null,
                   imageInfo: newImageInfo,
                 },
@@ -283,7 +286,7 @@ describe('image_infos_reducer', () => {
           }),
         };
 
-        expect(imageInfosReducer(startState(true), {
+        expect(imageInfosReducer(startState('update'), {
           type: 'IMAGE_GALLERY_IMAGE_INFO_UPDATE_RESPONSE_OK',
           galleryId: 23,
           imageInfo: newImageInfo,

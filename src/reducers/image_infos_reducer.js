@@ -5,9 +5,12 @@ import _ from 'lodash';
 import type { ImageGalleryImageInfo } from '../models/ImageGalleryImageInfo';
 import type { MediaGalleryAction } from '../actions/types';
 
+/**  Operations allowed on an image info object. */
+export type ImageInfoOperation = 'delete' | 'update' | 'fetch';
+
 /** Information about one particular image. */
 type ImageInfoState = {
-  +loading: boolean,
+  +processing: ?ImageInfoOperation,
   +imageInfo: ImageGalleryImageInfo,
   +error: ?Object,
 };
@@ -143,29 +146,29 @@ export function imageInfosReducer(
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_DELETE_REQUEST':
       return mergeGalleryImages(state, action.galleryId, action.imageInfoId, {
-        loading: true,
+        processing: 'delete',
         error: null,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_DELETE_RESPONSE_ERROR':
       return mergeGalleryImages(state, action.galleryId, action.imageInfoId, {
-        loading: false,
+        processing: null,
         error: action.error,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_DELETE_RESPONSE_OK':
       return processDeleteOk(state, action.galleryId, action.imageInfoId);
     case 'IMAGE_GALLERY_IMAGE_INFO_UPDATE_REQUEST':
       return mergeGalleryImages(state, action.galleryId, action.imageInfoId, {
-        loading: true,
+        processing: 'update',
         error: null,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_UPDATE_RESPONSE_ERROR':
       return mergeGalleryImages(state, action.galleryId, action.imageInfoId, {
-        loading: false,
+        processing: null,
         error: action.error,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_UPDATE_RESPONSE_OK':
       return mergeGalleryImages(state, action.galleryId, action.imageInfo.id, {
-        loading: false,
+        processing: null,
         error: null,
         imageInfo: action.imageInfo,
       });
@@ -182,19 +185,20 @@ export function selectImageInfos(
   return gallery ? gallery.imageInfos.map(i => i.imageInfo).toIndexedSeq().toArray() : [];
 }
 
-export function selectImageInfoLoading(
+/** Returns operation being processed on given image info. */
+export function selectImageInfoProcessingType(
   state: State,
   galleryId: number,
   imageInfoId: number,
-) : boolean {
+) : ?ImageInfoOperation {
   const gallery = state.galleryImages.get(galleryImageIndex(galleryId));
   if (gallery) {
     const imageInfo = gallery.imageInfos.get(imageIndex(imageInfoId));
     if (imageInfo) {
-      return imageInfo.loading;
+      return imageInfo.processing;
     }
   }
-  return false;
+  return null;
 }
 
 export function selectImageInfo(
