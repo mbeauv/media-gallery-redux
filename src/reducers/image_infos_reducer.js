@@ -8,6 +8,9 @@ import type { MediaGalleryAction } from '../actions/types';
 /**  Operations allowed on an image info object. */
 export type ImageInfoOperation = 'delete' | 'update' | 'fetch';
 
+/**  Operations allowed on an image info collection. */
+export type ImageInfosOperation = 'add' | 'delete' | 'fetch';
+
 /** Information about one particular image. */
 type ImageInfoState = {
   +processing: ?ImageInfoOperation,
@@ -17,7 +20,7 @@ type ImageInfoState = {
 
 /** Information about one gallery of images. */
 type GalleryImagesState = {
-  +loading: boolean,
+  +processing: ?ImageInfosOperation,
   +error: ?Object,
   +imageInfos: Map<string, ImageInfoState>,
 }
@@ -50,11 +53,11 @@ function processGalleryListResponseOk(
 ) : State {
   const infos = [];
   _.reduce(imageInfos, (r, v) => {
-    r.push([imageIndex(v.id), { loading: false, error: null, imageInfo: v }]);
+    r.push([imageIndex(v.id), { processing: null, error: null, imageInfo: v }]);
     return r;
   }, infos);
 
-  const gallery = { loading: false, error: null, imageInfos: Map(infos) };
+  const gallery = { processing: null, error: null, imageInfos: Map(infos) };
   return {
     ...state,
     galleryImages: state.galleryImages.set(galleryImageIndex(galleryId), gallery),
@@ -100,7 +103,7 @@ function mergeGalleryImages(
     ...state,
     galleryImages: state.galleryImages.mergeDeep({
       [galleryImageIndex(galleryId)]: {
-        loading: false,
+        processing: null,
         error: null,
         imageInfos: {
           [imageIndex(imageInfoId)]: attribs,
@@ -117,30 +120,30 @@ export function imageInfosReducer(
   switch (action.type) {
     case 'IMAGE_GALLERY_IMAGE_INFO_LIST_REQUEST':
       return mergeGallery(state, action.galleryId, {
-        loading: true,
+        processing: 'fetch',
         error: null,
         imageInfos: Map(),
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_LIST_RESPONSE_ERROR':
       return mergeGallery(state, action.galleryId, {
-        loading: false,
+        processing: null,
         error: action.error,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_LIST_RESPONSE_OK':
       return processGalleryListResponseOk(state, action.galleryId, action.imageInfos);
     case 'IMAGE_GALLERY_IMAGE_INFO_CREATE_REQUEST':
       return mergeGallery(state, action.galleryId, {
-        loading: true,
+        processing: 'add',
         error: null,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_CREATE_RESPONSE_ERROR':
       return mergeGallery(state, action.galleryId, {
-        loading: false,
+        processing: null,
         error: action.error,
       });
     case 'IMAGE_GALLERY_IMAGE_INFO_CREATE_RESPONSE_OK':
       return mergeGalleryImages(state, action.galleryId, action.imageInfo.id, {
-        loading: false,
+        processing: null,
         error: null,
         imageInfo: action.imageInfo,
       });
@@ -177,12 +180,22 @@ export function imageInfosReducer(
   }
 }
 
+/** Return all the image infos associated to a given gallery. */
 export function selectImageInfos(
   state: State,
   galleryId: number,
 ) : Array<ImageGalleryImageInfo> {
   const gallery = state.galleryImages.get(galleryImageIndex(galleryId));
   return gallery ? gallery.imageInfos.map(i => i.imageInfo).toIndexedSeq().toArray() : [];
+}
+
+/** Return the processing state of the gallery collection. */
+export function selectImageInfosProcessingType(
+  state: State,
+  galleryId: number,
+) : ?ImageInfosOperation {
+  const gallery = state.galleryImages.get(galleryImageIndex(galleryId));
+  return gallery ? gallery.processing : null;
 }
 
 /** Returns operation being processed on given image info. */

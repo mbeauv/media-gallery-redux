@@ -7,6 +7,7 @@ import {
   selectImageInfos,
   selectImageInfo,
   selectImageInfoProcessingType,
+  selectImageInfosProcessingType,
 } from '../image_infos_reducer';
 import type {
   ImageInfoOperation,
@@ -43,7 +44,7 @@ describe('image_infos_reducer', () => {
       startState = {
         galleryImages: Map({
           gallery_23: {
-            loading: false,
+            processing: null,
             error: null,
             imageInfos: Map({
               image_22: {
@@ -60,6 +61,29 @@ describe('image_infos_reducer', () => {
           },
         }),
       };
+    });
+
+    describe('selectImageInfosProcessingType', () => {
+      it('returns null if not processing', () => {
+        expect(selectImageInfosProcessingType(startState, 23)).toEqual(null);
+      });
+
+      it('returns null if gallery not found', () => {
+        expect(selectImageInfosProcessingType(startState, 213)).toEqual(null);
+      });
+
+      it('returns processing state if state set', () => {
+        const testState = {
+          galleryImages: Map({
+            gallery_23: {
+              processing: 'fetch',
+              error: null,
+              imageInfos: Map(),
+            },
+          }),
+        };
+        expect(selectImageInfosProcessingType(testState, 23)).toEqual('fetch');
+      });
     });
 
     describe('selectImageInfoProcessingType', () => {
@@ -119,7 +143,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: true,
+              processing: 'add',
               error: null,
             },
           }),
@@ -137,7 +161,7 @@ describe('image_infos_reducer', () => {
         {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -155,7 +179,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -179,7 +203,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -204,7 +228,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map(),
             },
@@ -222,7 +246,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -246,7 +270,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -273,7 +297,7 @@ describe('image_infos_reducer', () => {
         const expectedState = {
           galleryImages: Map({
             gallery_23: {
-              loading: false,
+              processing: null,
               error: null,
               imageInfos: Map({
                 image_22: {
@@ -298,7 +322,7 @@ describe('image_infos_reducer', () => {
       const startState = {
         galleryImages: Map({
           gallery_23: {
-            loading: true,
+            processing: 'add',
             error: null,
             imageInfos: Map(),
           },
@@ -307,7 +331,7 @@ describe('image_infos_reducer', () => {
       const expectedState = {
         galleryImages: Map({
           gallery_23: {
-            loading: false,
+            processing: null,
             error: ERROR,
             imageInfos: Map(),
           },
@@ -324,7 +348,7 @@ describe('image_infos_reducer', () => {
       const startState = {
         galleryImages: Map({
           gallery_23: {
-            loading: true,
+            processing: 'add',
             error: null,
             imageInfos: Map(),
           },
@@ -333,11 +357,11 @@ describe('image_infos_reducer', () => {
       const expectedState = {
         galleryImages: Map({
           gallery_23: {
-            loading: false,
+            processing: null,
             error: null,
             imageInfos: Map({
               image_22: {
-                loading: false,
+                processing: null,
                 error: null,
                 imageInfo: IMAGE_INFO_1,
               },
@@ -358,7 +382,7 @@ describe('image_infos_reducer', () => {
       const expectedState = {
         galleryImages: Map({
           gallery_23: {
-            loading: true,
+            processing: 'fetch',
             error: null,
             imageInfos: Map(),
           },
@@ -372,7 +396,7 @@ describe('image_infos_reducer', () => {
     it('processes IMAGE_GALLERY_IMAGE_INFO_LIST_RESPONSE_ERROR', () => {
       const startState = { galleryImages: Map({
         gallery_23: {
-          loading: true,
+          processing: 'fetch',
           error: null,
           imageInfos: Map(),
         },
@@ -380,7 +404,7 @@ describe('image_infos_reducer', () => {
       const expectedState = {
         galleryImages: Map({
           gallery_23: {
-            loading: false,
+            processing: null,
             error: ERROR,
             imageInfos: Map(),
           },
@@ -398,7 +422,7 @@ describe('image_infos_reducer', () => {
       const startState = {
         galleryImages: Map({
           gallery_23: {
-            loading: true,
+            processing: 'fetch',
             error: null,
             imageInfos: Map(),
           },
@@ -407,11 +431,11 @@ describe('image_infos_reducer', () => {
       const expectedState = {
         galleryImages: Map({
           gallery_23: {
-            loading: false,
+            processing: null,
             error: null,
             imageInfos: Map({
               image_22: {
-                loading: false,
+                processing: null,
                 error: null,
                 imageInfo: IMAGE_INFO_1,
               },
