@@ -8,6 +8,8 @@ import {
   selectImageInfo,
   selectImageInfoProcessingType,
   selectImageInfosProcessingType,
+  selectImageInfosError,
+  selectImageInfoError,
 } from '../image_infos_reducer';
 import type {
   ImageInfoOperation,
@@ -49,7 +51,7 @@ describe('image_infos_reducer', () => {
             imageInfos: Map({
               image_22: {
                 processing: null,
-                error: null,
+                error: ERROR,
                 imageInfo: IMAGE_INFO_1,
               },
               image_18: {
@@ -61,6 +63,25 @@ describe('image_infos_reducer', () => {
           },
         }),
       };
+    });
+
+    describe('selectImageInfosError', () => {
+      it('returns null if no error', () => {
+        expect(selectImageInfosError(startState, 23)).toEqual(null);
+      });
+
+      it('returns the error if present', () => {
+        const testState = {
+          galleryImages: Map({
+            gallery_23: {
+              processing: null,
+              error: ERROR,
+              imageInfos: Map(),
+            },
+          }),
+        };
+        expect(selectImageInfosError(testState, 23)).toEqual(ERROR);
+      });
     });
 
     describe('selectImageInfosProcessingType', () => {
@@ -83,6 +104,24 @@ describe('image_infos_reducer', () => {
           }),
         };
         expect(selectImageInfosProcessingType(testState, 23)).toEqual('fetch');
+      });
+    });
+
+    describe('selectImageInfoError', () => {
+      it('returns operational value when no error', () => {
+        expect(selectImageInfoError(startState, 23, 18)).toEqual(null);
+      });
+
+      it('returns error when image info in error', () => {
+        expect(selectImageInfoError(startState, 23, 22)).toEqual(ERROR);
+      });
+
+      it('returns null if image not found', () => {
+        expect(selectImageInfoError(startState, 23, 25)).toEqual(null);
+      });
+
+      it('returns null if gallery not found', () => {
+        expect(selectImageInfoError(startState, 23, 12)).toEqual(null);
       });
     });
 

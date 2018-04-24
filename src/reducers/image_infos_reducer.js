@@ -198,6 +198,15 @@ export function selectImageInfosProcessingType(
   return gallery ? gallery.processing : null;
 }
 
+/** Return the error object of the gallery collection. */
+export function selectImageInfosError(
+  state: State,
+  galleryId: number,
+) : ?Object {
+  const gallery = state.galleryImages.get(galleryImageIndex(galleryId));
+  return gallery ? gallery.error : null;
+}
+
 /** Returns operation being processed on given image info. */
 export function selectImageInfoProcessingType(
   state: State,
@@ -209,6 +218,22 @@ export function selectImageInfoProcessingType(
     const imageInfo = gallery.imageInfos.get(imageIndex(imageInfoId));
     if (imageInfo) {
       return imageInfo.processing;
+    }
+  }
+  return null;
+}
+
+/** Returns error on given image info. */
+export function selectImageInfoError(
+  state: State,
+  galleryId: number,
+  imageInfoId: number,
+) : ?Object {
+  const gallery = state.galleryImages.get(galleryImageIndex(galleryId));
+  if (gallery) {
+    const imageInfo = gallery.imageInfos.get(imageIndex(imageInfoId));
+    if (imageInfo) {
+      return imageInfo.error;
     }
   }
   return null;

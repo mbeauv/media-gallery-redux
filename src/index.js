@@ -11,7 +11,9 @@ export {
   selectGalleriesByName,
   selectGalleryWithId,
   selectGalleryProcessingType,
-  selectGalleryListProcessingType,
+  selectGalleryError,
+  selectGalleriesProcessingType,
+  selectGalleriesError,
 } from './reducers/image_galleries_reducer';
 
 export {
@@ -20,6 +22,8 @@ export {
   selectImageInfos,
   selectImageInfoProcessingType,
   selectImageInfosProcessingType,
+  selectImageInfoError,
+  selectImageInfosError,
 } from './reducers/image_infos_reducer';
 
 export type {

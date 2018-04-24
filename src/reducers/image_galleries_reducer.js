@@ -139,7 +139,19 @@ export function selectGalleryProcessingType(state: ImageGalleryListState, galler
   return gallery ? gallery.processing : null;
 }
 
+/** Returns current error associated to gallery. Null if no error. */
+export function selectGalleryError(state: ImageGalleryListState, galleryId: number)
+: ?Object {
+  const gallery = state.galleries.get(galleryIndex(galleryId));
+  return gallery ? gallery.error : null;
+}
+
 /** Returns current operation being processed on a gallery collrection.  Null if no operation. */
-export function selectGalleryListProcessingType(state: ImageGalleryListState) {
+export function selectGalleriesProcessingType(state: ImageGalleryListState) {
   return state.processing;
+}
+
+/** Returns current error object associated to the gallery collection. */
+export function selectGalleryListError(state: ImageGalleryListState) : ?Object {
+  return state.error;
 }

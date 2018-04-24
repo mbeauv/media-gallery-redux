@@ -9,7 +9,9 @@ import {
   selectGalleriesById,
   selectGalleryWithId,
   selectGalleryProcessingType,
-  selectGalleryListProcessingType,
+  selectGalleriesProcessingType,
+  selectGalleryError,
+  selectGalleryListError,
 } from '../image_galleries_reducer';
 import type {
   ImageGalleryListState,
@@ -58,7 +60,7 @@ describe('image_galleries_reducer', () => {
           },
           gallery_5: {
             processing: null,
-            error: null,
+            error: ERROR,
             gallery: GALLERY_INFO_2,
           },
         }),
@@ -119,6 +121,20 @@ describe('image_galleries_reducer', () => {
       });
     });
 
+    describe('selectGalleryError', () => {
+      it('returns null when gallery has no error', () => {
+        expect(selectGalleryError(stateWithData, 6)).toEqual(null);
+      });
+
+      it('returns the error when gallery has error', () => {
+        expect(selectGalleryError(stateWithData, 5)).toEqual(ERROR);
+      });
+
+      it('returns null when gallery does not exist', () => {
+        expect(selectGalleryError(stateWithData, 25)).toEqual(null);
+      });
+    });
+
     describe('selectGalleryProcessingType', () => {
       it('returns true when gallery is loading', () => {
         expect(selectGalleryProcessingType(stateWithData, 6)).toEqual(null);
@@ -133,14 +149,25 @@ describe('image_galleries_reducer', () => {
       });
     });
 
-    describe('selectGalleryListProcessingType', () => {
-      it('returns true when gallery is loading', () => {
-        expect(selectGalleryListProcessingType(stateWithData)).toEqual(null);
+    describe('selectGalleriesProcessingType', () => {
+      it('returns null when gallery is not being processed', () => {
+        expect(selectGalleriesProcessingType(stateWithData)).toEqual(null);
       });
 
-      it('returns false when gallery is not loading', () => {
+      it('returns add when gallery image is being added', () => {
         const testState = { ...stateWithData, processing: 'add' };
-        expect(selectGalleryListProcessingType(testState)).toEqual('add');
+        expect(selectGalleriesProcessingType(testState)).toEqual('add');
+      });
+    });
+
+    describe('selectGalleryListError', () => {
+      it('returns null if there is no list level error', () => {
+        expect(selectGalleryListError(stateWithoutData)).toEqual(null);
+      });
+
+      it('returns the error if there is a collection level error', () => {
+        const errorState = { ...stateWithData, error: ERROR };
+        expect(selectGalleryListError(errorState)).toEqual(ERROR);
       });
     });
   });
